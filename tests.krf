@@ -1,0 +1,62 @@
+(in-microtheory DiseaseDiagnosisTestMt)
+(genlMt DiseaseDiagnosisTestMt DiseaseDiagnosisMt)
+(isa DiseaseDiagnosisTestMt Microtheory)
+(comment DiseaseDiagnosisTestMt "DiseaseDiagnosisTestMt is a microtheory for testing our reasoning rules, primarily for testing possible diagnoses and recommended tests, as well as testing queries for returning a list of a patient's possible diagnoses in order of how common they are.")
+
+;; Arthritis
+(isa Alice Patient)
+(patientHasSymptom Alice SleepDisorder)
+(patientHasSymptom Alice RestrictedMotion)
+(patientHasSymptom Alice Pain)
+(patientHasSymptom Alice Stiffness)
+
+; query (possibleDiagnosis Alice ?disease)
+
+;;  Dementia
+(isa Bob Patient)
+(patientHasSymptom Bob SleepDisorder)
+(patientHasSymptom Bob Depression)
+(patientHasSymptom Bob MemoryLoss)
+
+; query (possibleDiagnosis Bob ?disease)
+
+;;arthritis + dementia
+(isa Carlos Patient)
+(patientHasSymptom Carlos SleepDisorder)
+
+
+;; Stroke
+(isa Charlie Patient)
+(patientHasSymptom Charlie Numbness)
+(patientHasSymptom Charlie Dizziness)
+
+; query (possibleDiagnosis Charlie ?disease)
+
+;;multiple
+(isa Chad Patient)
+(patientHasSymptom Charlie Dizziness)
+
+; query (possibleDiagnosis Chad ?disease)
+
+;;AsthmaAttack
+(isa Dan Patient)
+(patientHasSymptom Dan Cough)
+
+; query (possibleDiagnosis Dan ?disease)
+
+(isa Niko Patient)
+(patientHasSymptom Niko SoreThroat)
+
+; query (possibleDiagnosis Niko ?disease) - Covid19, Influenza, AsthmaAttack
+; query (recommendedTest Niko ?test) - Covid19-Test, Spirometry, PeakExpiratoryFlow, BloodTest
+
+(isa Tyler Patient)
+(patientHasSymptom Tyler Fever)
+
+; query (possibleDiagnosis Tyler ?disease) - Covid19, CysticFibrosis, and Influenza
+; query (recommendedTest Tyler ?test) - Covid19-Test
+
+; test for ranking diseases
+; query (evaluate ?s (SortFn (TheClosedRetrievalSetOf ?d (possibleDiagnosis Tyler ?d)) lessThan (FunctionToArg 2 diseaseHasFrequency))) - ordered list of Covid19, Influenza, then CysticFibrosis or Influenza, Covid19, then CysticFibrosis since Covid19 and Influenza both have the same disease frequency level
+
+

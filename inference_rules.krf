@@ -1,0 +1,24 @@
+(in-microtheory DiseaseDiagnosisMt)
+
+; determines if a patient has a symptom that does not match the possible symptoms of a disease
+(<== (hasNonOverlappingSymptom ?patient ?disease)
+    (patientHasSymptom ?patient ?symptom)
+    (uninferredSentence (diseaseHasSymptomType ?disease ?symptom)))
+
+; infers whether a disease could explain all the symptoms of the given patient
+(<== (possibleDiagnosis ?patient ?disease)
+    (diseaseHasSymptomType ?disease ?symptom)
+    (patientHasSymptom ?patient ?symptom)
+    (uninferredSentence (hasNonOverlappingSymptom ?patient ?disease)))
+
+; infers that a test could be performed on a patient to provide further information for their diagnosis based on whether there are multiple possible diagnoses for them and whether there is medical testing that could be done to narrow down the possible diagnoses
+(<== (recommendedTest ?patient ?test)
+    (possibleDiagnosis ?patient ?disease1)
+    (possibleDiagnosis ?patient ?disease2)
+    (medicalTestRelevantToPhysiologicalConditionType ?test ?disease1)
+    (uninferredSentence (equals ?disease1 ?disease2))
+)
+
+
+; to display an ordered list of a patient's possible diagnoses based on how commonly they occur in the population, run this query replacing ?PATIENT with the patient of interest
+;(evaluate ?s (SortFn (TheClosedRetrievalSetOf ?d (possibleDiagnosis ?PATIENT ?d)) lessThan (FunctionToArg 2 diseaseHasFrequency)))
